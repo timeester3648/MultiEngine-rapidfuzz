@@ -1,5 +1,18 @@
 ## Changelog
 
+## [3.0.5] - 2024-07-02
+### Fixed
+- the editops implementation didn't properly account for some cells in the Levenshtein matrix.
+  This could lead both to incorrect results and crashes.
+
+## [3.0.4] - 2023-04-07
+### Fixed
+- fix tagged version
+
+## [3.0.3] - 2023-04-06
+### Fixed
+- fix potentially incorrect results of JaroWinkler when using high prefix weights
+
 ## [3.0.2] - 2023-03-04
 ### Fixed
 - fix assert leading to compilation failures
