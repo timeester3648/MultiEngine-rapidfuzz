@@ -1,5 +1,9 @@
-#include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_floating_point.hpp>
+#if CATCH2_VERSION == 2
+#    include <catch2/catch.hpp>
+#else
+#    include <catch2/catch_test_macros.hpp>
+#    include <catch2/matchers/catch_matchers_floating_point.hpp>
+#endif
 
 #include <rapidfuzz/fuzz.hpp>
 
@@ -109,6 +113,13 @@ TEST_CASE("RatioTest")
     {
         // misordered full matches are scaled by .95
         score_test(95, fuzz::WRatio(s4, s5));
+    }
+
+    SECTION("testIssue452") /* test for https://github.com/rapidfuzz/RapidFuzz/issues/452 */
+    {
+        std::string b = "hello";
+        b += str_multiply(std::string("abcde"), 7);
+        score_test(90, fuzz::WRatio("hello", b));
     }
 
     SECTION("testTwoEmptyStrings")

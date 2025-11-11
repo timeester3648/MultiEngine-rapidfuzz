@@ -1,5 +1,34 @@
 ## Changelog
 
+## [3.3.3] - 2025-08-27
+### Fixed
+- fixed WRatio for a length ratio of exactly 8.0
+
+## [3.3.2] - 2025-02-11
+### Fixed
+- fixed compilation with old msvc versions that don't properly support if constexpr
+
+## [3.3.1] - 2025-01-22
+### Fixed
+- fixed tests not building with catch2 versions >= 3.0
+
+## [3.3.0] - 2025-01-18
+### Changed
+- add C++11 and C++14 support
+
+## [3.2.0] - 2024-12-17
+### Performance
+- improve calculation of min score inside partial_ratio so it can skip more alignments
+
+## [3.1.1] - 2024-10-24
+### Fixed
+- Fixed incorrect score calculation for SIMD implementations of Levenshtein and OSA on 32 bit systems
+
+## [3.1.0] - 024-10-24
+### Changed
+- split `editops_apply`/`opcodes_apply` into `*_apply_str` and `*_apply_vec`. This avoids the instantiation of
+  std::basic_string for unsupported types.
+
 ## [3.0.5] - 2024-07-02
 ### Fixed
 - the editops implementation didn't properly account for some cells in the Levenshtein matrix.

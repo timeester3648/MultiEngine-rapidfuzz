@@ -1,5 +1,10 @@
-#include <catch2/catch_approx.hpp>
-#include <catch2/catch_test_macros.hpp>
+#if CATCH2_VERSION == 2
+#    include <catch2/catch.hpp>
+#else
+#    include <catch2/catch_test_macros.hpp>
+#    include <catch2/matchers/catch_matchers_floating_point.hpp>
+#endif
+
 #include <string>
 
 #include <rapidfuzz/distance.hpp>
@@ -7,7 +12,7 @@
 
 #include "../common.hpp"
 
-using Catch::Approx;
+using Catch::Matchers::WithinAbs;
 
 template <typename Sentence1, typename Sentence2>
 size_t indel_distance(const Sentence1& s1, const Sentence2& s2,
@@ -15,10 +20,9 @@ size_t indel_distance(const Sentence1& s1, const Sentence2& s2,
 {
     size_t res1 = rapidfuzz::indel_distance(s1, s2, max);
     size_t res2 = rapidfuzz::indel_distance(s1.begin(), s1.end(), s2.begin(), s2.end(), max);
-    size_t res3 = rapidfuzz::indel_distance(
-        BidirectionalIterWrapper(s1.begin()), BidirectionalIterWrapper(s1.end()),
-        BidirectionalIterWrapper(s2.begin()), BidirectionalIterWrapper(s2.end()), max);
-    rapidfuzz::CachedIndel scorer(s1);
+    size_t res3 = rapidfuzz::indel_distance(make_bidir(s1.begin()), make_bidir(s1.end()),
+                                            make_bidir(s2.begin()), make_bidir(s2.end()), max);
+    rapidfuzz::CachedIndel<rapidfuzz::char_type<Sentence1>> scorer(s1);
     size_t res4 = scorer.distance(s2, max);
     size_t res5 = scorer.distance(s2.begin(), s2.end(), max);
 #ifdef RAPIDFUZZ_SIMD
@@ -63,10 +67,9 @@ size_t indel_similarity(const Sentence1& s1, const Sentence2& s2, size_t max = 0
 {
     size_t res1 = rapidfuzz::indel_similarity(s1, s2, max);
     size_t res2 = rapidfuzz::indel_similarity(s1.begin(), s1.end(), s2.begin(), s2.end(), max);
-    size_t res3 = rapidfuzz::indel_similarity(
-        BidirectionalIterWrapper(s1.begin()), BidirectionalIterWrapper(s1.end()),
-        BidirectionalIterWrapper(s2.begin()), BidirectionalIterWrapper(s2.end()), max);
-    rapidfuzz::CachedIndel scorer(s1);
+    size_t res3 = rapidfuzz::indel_similarity(make_bidir(s1.begin()), make_bidir(s1.end()),
+                                              make_bidir(s2.begin()), make_bidir(s2.end()), max);
+    rapidfuzz::CachedIndel<rapidfuzz::char_type<Sentence1>> scorer(s1);
     size_t res4 = scorer.similarity(s2, max);
     size_t res5 = scorer.similarity(s2.begin(), s2.end(), max);
 #ifdef RAPIDFUZZ_SIMD
@@ -110,10 +113,10 @@ double indel_normalized_distance(const Sentence1& s1, const Sentence2& s2, doubl
     double res1 = rapidfuzz::indel_normalized_distance(s1, s2, score_cutoff);
     double res2 =
         rapidfuzz::indel_normalized_distance(s1.begin(), s1.end(), s2.begin(), s2.end(), score_cutoff);
-    double res3 = rapidfuzz::indel_normalized_distance(
-        BidirectionalIterWrapper(s1.begin()), BidirectionalIterWrapper(s1.end()),
-        BidirectionalIterWrapper(s2.begin()), BidirectionalIterWrapper(s2.end()), score_cutoff);
-    rapidfuzz::CachedIndel scorer(s1);
+    double res3 =
+        rapidfuzz::indel_normalized_distance(make_bidir(s1.begin()), make_bidir(s1.end()),
+                                             make_bidir(s2.begin()), make_bidir(s2.end()), score_cutoff);
+    rapidfuzz::CachedIndel<rapidfuzz::char_type<Sentence1>> scorer(s1);
     double res4 = scorer.normalized_distance(s2, score_cutoff);
     double res5 = scorer.normalized_distance(s2.begin(), s2.end(), score_cutoff);
 #ifdef RAPIDFUZZ_SIMD
@@ -141,13 +144,13 @@ double indel_normalized_distance(const Sentence1& s1, const Sentence2& s2, doubl
             simd_scorer.normalized_distance(&results[0], results.size(), s2, score_cutoff);
         }
 
-        REQUIRE(res1 == Catch::Approx(results[0]).epsilon(0.0001));
+        REQUIRE_THAT(res1, WithinAbs(results[0], 0.0001));
     }
 #endif
-    REQUIRE(res1 == Catch::Approx(res2).epsilon(0.0001));
-    REQUIRE(res1 == Catch::Approx(res3).epsilon(0.0001));
-    REQUIRE(res1 == Catch::Approx(res4).epsilon(0.0001));
-    REQUIRE(res1 == Catch::Approx(res5).epsilon(0.0001));
+    REQUIRE_THAT(res1, WithinAbs(res2, 0.0001));
+    REQUIRE_THAT(res1, WithinAbs(res3, 0.0001));
+    REQUIRE_THAT(res1, WithinAbs(res4, 0.0001));
+    REQUIRE_THAT(res1, WithinAbs(res5, 0.0001));
     return res1;
 }
 
@@ -157,10 +160,10 @@ double indel_normalized_similarity(const Sentence1& s1, const Sentence2& s2, dou
     double res1 = rapidfuzz::indel_normalized_similarity(s1, s2, score_cutoff);
     double res2 =
         rapidfuzz::indel_normalized_similarity(s1.begin(), s1.end(), s2.begin(), s2.end(), score_cutoff);
-    double res3 = rapidfuzz::indel_normalized_similarity(
-        BidirectionalIterWrapper(s1.begin()), BidirectionalIterWrapper(s1.end()),
-        BidirectionalIterWrapper(s2.begin()), BidirectionalIterWrapper(s2.end()), score_cutoff);
-    rapidfuzz::CachedIndel scorer(s1);
+    double res3 =
+        rapidfuzz::indel_normalized_similarity(make_bidir(s1.begin()), make_bidir(s1.end()),
+                                               make_bidir(s2.begin()), make_bidir(s2.end()), score_cutoff);
+    rapidfuzz::CachedIndel<rapidfuzz::char_type<Sentence1>> scorer(s1);
     double res4 = scorer.normalized_similarity(s2, score_cutoff);
     double res5 = scorer.normalized_similarity(s2.begin(), s2.end(), score_cutoff);
 #ifdef RAPIDFUZZ_SIMD
@@ -188,13 +191,13 @@ double indel_normalized_similarity(const Sentence1& s1, const Sentence2& s2, dou
             simd_scorer.normalized_similarity(&results[0], results.size(), s2, score_cutoff);
         }
 
-        REQUIRE(res1 == Catch::Approx(results[0]).epsilon(0.0001));
+        REQUIRE_THAT(res1, WithinAbs(results[0], 0.0001));
     }
 #endif
-    REQUIRE(res1 == Catch::Approx(res2).epsilon(0.0001));
-    REQUIRE(res1 == Catch::Approx(res3).epsilon(0.0001));
-    REQUIRE(res1 == Catch::Approx(res4).epsilon(0.0001));
-    REQUIRE(res1 == Catch::Approx(res5).epsilon(0.0001));
+    REQUIRE_THAT(res1, WithinAbs(res2, 0.0001));
+    REQUIRE_THAT(res1, WithinAbs(res3, 0.0001));
+    REQUIRE_THAT(res1, WithinAbs(res4, 0.0001));
+    REQUIRE_THAT(res1, WithinAbs(res5, 0.0001));
     return res1;
 }
 
@@ -247,8 +250,9 @@ TEST_CASE("Indel")
     {
         std::string a = "001";
         std::string b = "220";
-        REQUIRE(Approx(0.3333333) == rapidfuzz::indel_normalized_similarity(a, b));
-        REQUIRE(Approx(0.3333333) == rapidfuzz::CachedIndel<char>(a).normalized_similarity(b));
+        REQUIRE_THAT(rapidfuzz::indel_normalized_similarity(a, b), WithinAbs(0.3333333, 0.000001));
+        REQUIRE_THAT(rapidfuzz::CachedIndel<char>(a).normalized_similarity(b),
+                     WithinAbs(0.3333333, 0.000001));
     }
 
     SECTION("test banded implementation")
@@ -277,7 +281,7 @@ TEST_CASE("Indel")
             REQUIRE(indel_distance(s1, s2) == 231);
 
             rapidfuzz::Editops ops = rapidfuzz::indel_editops(s1, s2);
-            REQUIRE(s2 == rapidfuzz::editops_apply<char>(ops, s1, s2));
+            REQUIRE(s2 == rapidfuzz::editops_apply_str<char>(ops, s1, s2));
         }
     }
 }

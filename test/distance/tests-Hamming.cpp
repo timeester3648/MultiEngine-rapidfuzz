@@ -1,10 +1,18 @@
-#include <catch2/catch_approx.hpp>
-#include <catch2/catch_test_macros.hpp>
+#if CATCH2_VERSION == 2
+#    include <catch2/catch.hpp>
+#else
+#    include <catch2/catch_test_macros.hpp>
+#    include <catch2/matchers/catch_matchers_floating_point.hpp>
+#endif
+
 #include <rapidfuzz/distance.hpp>
 #include <rapidfuzz/distance/Hamming.hpp>
 #include <string>
 
 #include "../common.hpp"
+#include "rapidfuzz/details/type_traits.hpp"
+
+using Catch::Matchers::WithinAbs;
 
 template <typename Sentence1, typename Sentence2>
 size_t hamming_distance(const Sentence1& s1, const Sentence2& s2,
@@ -12,10 +20,9 @@ size_t hamming_distance(const Sentence1& s1, const Sentence2& s2,
 {
     size_t res1 = rapidfuzz::hamming_distance(s1, s2, max);
     size_t res2 = rapidfuzz::hamming_distance(s1.begin(), s1.end(), s2.begin(), s2.end(), max);
-    size_t res3 = rapidfuzz::hamming_distance(
-        BidirectionalIterWrapper(s1.begin()), BidirectionalIterWrapper(s1.end()),
-        BidirectionalIterWrapper(s2.begin()), BidirectionalIterWrapper(s2.end()), max);
-    rapidfuzz::CachedHamming scorer(s1);
+    size_t res3 = rapidfuzz::hamming_distance(make_bidir(s1.begin()), make_bidir(s1.end()),
+                                              make_bidir(s2.begin()), make_bidir(s2.end()), max);
+    rapidfuzz::CachedHamming<rapidfuzz::char_type<Sentence1>> scorer(s1);
     size_t res4 = scorer.distance(s2, max);
     size_t res5 = scorer.distance(s2.begin(), s2.end(), max);
     REQUIRE(res1 == res2);
@@ -30,10 +37,9 @@ size_t hamming_similarity(const Sentence1& s1, const Sentence2& s2, size_t max =
 {
     size_t res1 = rapidfuzz::hamming_similarity(s1, s2, max);
     size_t res2 = rapidfuzz::hamming_similarity(s1.begin(), s1.end(), s2.begin(), s2.end(), max);
-    size_t res3 = rapidfuzz::hamming_similarity(
-        BidirectionalIterWrapper(s1.begin()), BidirectionalIterWrapper(s1.end()),
-        BidirectionalIterWrapper(s2.begin()), BidirectionalIterWrapper(s2.end()), max);
-    rapidfuzz::CachedHamming scorer(s1);
+    size_t res3 = rapidfuzz::hamming_similarity(make_bidir(s1.begin()), make_bidir(s1.end()),
+                                                make_bidir(s2.begin()), make_bidir(s2.end()), max);
+    rapidfuzz::CachedHamming<rapidfuzz::char_type<Sentence1>> scorer(s1);
     size_t res4 = scorer.similarity(s2, max);
     size_t res5 = scorer.similarity(s2.begin(), s2.end(), max);
     REQUIRE(res1 == res2);
@@ -49,16 +55,16 @@ double hamming_normalized_distance(const Sentence1& s1, const Sentence2& s2, dou
     double res1 = rapidfuzz::hamming_normalized_distance(s1, s2, score_cutoff);
     double res2 =
         rapidfuzz::hamming_normalized_distance(s1.begin(), s1.end(), s2.begin(), s2.end(), score_cutoff);
-    double res3 = rapidfuzz::hamming_normalized_distance(
-        BidirectionalIterWrapper(s1.begin()), BidirectionalIterWrapper(s1.end()),
-        BidirectionalIterWrapper(s2.begin()), BidirectionalIterWrapper(s2.end()), score_cutoff);
-    rapidfuzz::CachedHamming scorer(s1);
+    double res3 =
+        rapidfuzz::hamming_normalized_distance(make_bidir(s1.begin()), make_bidir(s1.end()),
+                                               make_bidir(s2.begin()), make_bidir(s2.end()), score_cutoff);
+    rapidfuzz::CachedHamming<rapidfuzz::char_type<Sentence1>> scorer(s1);
     double res4 = scorer.normalized_distance(s2, score_cutoff);
     double res5 = scorer.normalized_distance(s2.begin(), s2.end(), score_cutoff);
-    REQUIRE(res1 == Catch::Approx(res2).epsilon(0.0001));
-    REQUIRE(res1 == Catch::Approx(res3).epsilon(0.0001));
-    REQUIRE(res1 == Catch::Approx(res4).epsilon(0.0001));
-    REQUIRE(res1 == Catch::Approx(res5).epsilon(0.0001));
+    REQUIRE_THAT(res1, WithinAbs(res2, 0.0001));
+    REQUIRE_THAT(res1, WithinAbs(res3, 0.0001));
+    REQUIRE_THAT(res1, WithinAbs(res4, 0.0001));
+    REQUIRE_THAT(res1, WithinAbs(res5, 0.0001));
     return res1;
 }
 
@@ -68,16 +74,16 @@ double hamming_normalized_similarity(const Sentence1& s1, const Sentence2& s2, d
     double res1 = rapidfuzz::hamming_normalized_similarity(s1, s2, score_cutoff);
     double res2 =
         rapidfuzz::hamming_normalized_similarity(s1.begin(), s1.end(), s2.begin(), s2.end(), score_cutoff);
-    double res3 = rapidfuzz::hamming_normalized_similarity(
-        BidirectionalIterWrapper(s1.begin()), BidirectionalIterWrapper(s1.end()),
-        BidirectionalIterWrapper(s2.begin()), BidirectionalIterWrapper(s2.end()), score_cutoff);
-    rapidfuzz::CachedHamming scorer(s1);
+    double res3 =
+        rapidfuzz::hamming_normalized_similarity(make_bidir(s1.begin()), make_bidir(s1.end()),
+                                                 make_bidir(s2.begin()), make_bidir(s2.end()), score_cutoff);
+    rapidfuzz::CachedHamming<rapidfuzz::char_type<Sentence1>> scorer(s1);
     double res4 = scorer.normalized_similarity(s2, score_cutoff);
     double res5 = scorer.normalized_similarity(s2.begin(), s2.end(), score_cutoff);
-    REQUIRE(res1 == Catch::Approx(res2).epsilon(0.0001));
-    REQUIRE(res1 == Catch::Approx(res3).epsilon(0.0001));
-    REQUIRE(res1 == Catch::Approx(res4).epsilon(0.0001));
-    REQUIRE(res1 == Catch::Approx(res5).epsilon(0.0001));
+    REQUIRE_THAT(res1, WithinAbs(res2, 0.0001));
+    REQUIRE_THAT(res1, WithinAbs(res3, 0.0001));
+    REQUIRE_THAT(res1, WithinAbs(res4, 0.0001));
+    REQUIRE_THAT(res1, WithinAbs(res5, 0.0001));
     return res1;
 }
 
@@ -110,13 +116,13 @@ TEST_CASE("Hamming_editops")
 
     {
         rapidfuzz::Editops ops = rapidfuzz::hamming_editops(s, d);
-        REQUIRE(d == rapidfuzz::editops_apply<char>(ops, s, d));
+        REQUIRE(d == rapidfuzz::editops_apply_str<char>(ops, s, d));
         REQUIRE(ops.get_src_len() == s.size());
         REQUIRE(ops.get_dest_len() == d.size());
     }
     {
         rapidfuzz::Editops ops = rapidfuzz::hamming_editops(d, s);
-        REQUIRE(s == rapidfuzz::editops_apply<char>(ops, d, s));
+        REQUIRE(s == rapidfuzz::editops_apply_str<char>(ops, d, s));
         REQUIRE(ops.get_src_len() == d.size());
         REQUIRE(ops.get_dest_len() == s.size());
     }
