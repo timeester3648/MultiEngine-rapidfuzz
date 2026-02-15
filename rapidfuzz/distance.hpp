@@ -104,7 +104,7 @@ ReturnType opcodes_apply_impl(const Opcodes& ops, InputIt1 first1, InputIt1 last
 
 /**
  * @defgroup Distance Distance Algorithms
- * @brief tring distance and similarity measurements.
+ * @brief String distance and similarity measurements.
  * @{
  */
 
