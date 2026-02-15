@@ -8,6 +8,11 @@
 
 namespace rapidfuzz {
 
+/**
+ * @addtogroup Distance
+ * @{
+ */
+
 template <typename InputIt1, typename InputIt2,
           typename = rapidfuzz::rf_enable_if_t<!std::is_same<InputIt2, double>::value>>
 double jaro_winkler_distance(InputIt1 first1, InputIt1 last1, InputIt2 first2, InputIt2 last2,
@@ -207,5 +212,7 @@ template <typename InputIt1>
 CachedJaroWinkler(InputIt1 first1, InputIt1 last1,
                   double _prefix_weight = 0.1) -> CachedJaroWinkler<iter_value_t<InputIt1>>;
 #endif
+
+/** @} */
 
 } // namespace rapidfuzz
