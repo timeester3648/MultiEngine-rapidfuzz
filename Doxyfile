@@ -88,6 +88,7 @@ EXTRA_PACKAGES = amsmath xr amsfonts
 #---------------------------------------------------------------------------
 
 INPUT                  = rapidfuzz
+RECURSIVE              = YES
 
 FILE_PATTERNS          = *.c \
                          *.cxx \
