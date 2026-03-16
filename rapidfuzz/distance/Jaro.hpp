@@ -9,6 +9,11 @@
 
 namespace rapidfuzz {
 
+/**
+ * @addtogroup Distance
+ * @{
+ */
+
 template <typename InputIt1, typename InputIt2>
 double jaro_distance(InputIt1 first1, InputIt1 last1, InputIt2 first2, InputIt2 last2,
                      double score_cutoff = 1.0)
@@ -229,5 +234,7 @@ explicit CachedJaro(const Sentence1& s1_) -> CachedJaro<char_type<Sentence1>>;
 template <typename InputIt1>
 CachedJaro(InputIt1 first1, InputIt1 last1) -> CachedJaro<iter_value_t<InputIt1>>;
 #endif
+
+/** @} */
 
 } // namespace rapidfuzz

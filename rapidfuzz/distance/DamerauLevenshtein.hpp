@@ -5,6 +5,12 @@
 #include <rapidfuzz/distance/DamerauLevenshtein_impl.hpp>
 
 namespace rapidfuzz {
+
+/**
+ * @addtogroup Distance
+ * @{
+ */
+
 /* the API will require a change when adding custom weights */
 namespace experimental {
 /**
@@ -150,4 +156,7 @@ CachedDamerauLevenshtein(InputIt1 first1, InputIt1 last1) -> CachedDamerauLevens
 #endif
 
 } // namespace experimental
+
+/** @} */
+
 } // namespace rapidfuzz

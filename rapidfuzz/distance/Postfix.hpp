@@ -9,6 +9,11 @@
 
 namespace rapidfuzz {
 
+/**
+ * @addtogroup Distance
+ * @{
+ */
+
 template <typename InputIt1, typename InputIt2>
 size_t postfix_distance(InputIt1 first1, InputIt1 last1, InputIt2 first2, InputIt2 last2,
                         size_t score_cutoff = std::numeric_limits<size_t>::max())
@@ -100,6 +105,7 @@ explicit CachedPostfix(const Sentence1& s1_) -> CachedPostfix<char_type<Sentence
 template <typename InputIt1>
 CachedPostfix(InputIt1 first1, InputIt1 last1) -> CachedPostfix<iter_value_t<InputIt1>>;
 #endif
+
 /**@}*/
 
 } // namespace rapidfuzz

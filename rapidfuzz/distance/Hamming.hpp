@@ -9,6 +9,11 @@
 namespace rapidfuzz {
 
 /**
+ * @addtogroup Distance
+ * @{
+ */
+
+/**
  * @brief Calculates the Hamming distance between two strings.
  *
  * @details

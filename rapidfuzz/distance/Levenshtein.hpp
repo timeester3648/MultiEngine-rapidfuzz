@@ -9,6 +9,11 @@
 namespace rapidfuzz {
 
 /**
+ * @addtogroup Distance
+ * @{
+ */
+
+/**
  * @brief Calculates the minimum number of insertions, deletions, and substitutions
  * required to change one sequence into the other according to Levenshtein with custom
  * costs for insertion, deletion and substitution
@@ -490,5 +495,7 @@ template <typename InputIt1>
 CachedLevenshtein(InputIt1 first1, InputIt1 last1,
                   LevenshteinWeightTable aWeights = {1, 1, 1}) -> CachedLevenshtein<iter_value_t<InputIt1>>;
 #endif
+
+/** @} */
 
 } // namespace rapidfuzz
