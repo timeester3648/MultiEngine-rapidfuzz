@@ -447,7 +447,9 @@ private:
 #    define RAPIDFUZZ_IF_CONSTEXPR if
 #endif
 
-#if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201402L) || __cplusplus >= 201402L)
+#if defined(_MSC_VER) && !defined(__clang__) && _MSC_VER < 1910
+#    define RAPIDFUZZ_CONSTEXPR_CXX14 inline
+#elif ((defined(_MSVC_LANG) && _MSVC_LANG >= 201402L) || __cplusplus >= 201402L)
 #    define RAPIDFUZZ_CONSTEXPR_CXX14 constexpr
 #else
 #    define RAPIDFUZZ_CONSTEXPR_CXX14 inline
@@ -752,6 +754,8 @@ public:
         size_t result_pos = 0;
         for (const auto& sop : subsequence) {
             for (; op_iter != op_end && sop != *op_iter; op_iter++) {
+                if (result_pos >= result.size()) throw std::invalid_argument("subsequence is not a subsequence");
+
                 result[result_pos] = *op_iter;
                 result[result_pos].src_pos =
                     static_cast<size_t>(static_cast<ptrdiff_t>(result[result_pos].src_pos) + offset);

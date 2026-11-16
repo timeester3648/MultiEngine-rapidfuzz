@@ -1,5 +1,10 @@
 ## Changelog
 
+## [3.3.4] - 2026-08-29
+### Fixed
+- fixed potential out of bound access inside Editops::remove_subsequence
+- add some missing includes
+
 ## [3.3.3] - 2025-08-27
 ### Fixed
 - fixed WRatio for a length ratio of exactly 8.0
